@@ -7,20 +7,17 @@
 
 import UIKit
 import AVFoundation
+import Combine
 
 final class VideoPlayerViewController: UIViewController {
 
-    private let videoView: UIView = {
-        let view = UIView()
-        
-        return view
-    }()
-    var player: AVPlayer!
-    var playerLayer: AVPlayerLayer!
     var controllerView = ControlView()
-    
-    init(url: URL) {
-        player = AVPlayer(url: url)
+    private var isVideoPlaying = false
+    private let viewModel: VideoPlayerViewModel
+    private var cancellables = Set<AnyCancellable>()
+   
+    init(url: URL, viewModel: VideoPlayerViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,14 +27,12 @@ final class VideoPlayerViewController: UIViewController {
     
     override func viewDidLoad() {
         configureLayout()
+        bindAction()
     }
     
     private func configureLayout() {
         view.backgroundColor = .white
-        playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspectFill
-        playerLayer.frame = view.frame
-        
+        let playerLayer = viewModel.makeAVPlayerLayer(frame: view.frame)
         view.layer.addSublayer(playerLayer)
         
         controllerView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,8 +49,37 @@ final class VideoPlayerViewController: UIViewController {
         ])
     }
     
+    private func bindAction() {
+        let input = VideoPlayerViewModel.Input(playVideoButtonTappedEvent: controllerView.playButton.buttonPublisher)
+        
+        let output = viewModel.transform(input: input)
+        
+        output.isVideoPlaying
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print(error.localizedDescription)
+                }
+            }, receiveValue: { isVideoPlaying in
+                self.changePlayButtonImage(isVideoPlaying)
+            })
+            .store(in: &cancellables)
+    }
+    
+    private func changePlayButtonImage(_ isVideoPlaying: Bool) {
+        let config = UIImage.SymbolConfiguration(
+            pointSize: 30,
+            weight: .bold,
+            scale: .default
+        )
+        
+        let imageName = isVideoPlaying ? "pause.fill" : "play.fill"
+        
+        self.controllerView.playButton.setImage(
+            UIImage(systemName: imageName, withConfiguration: config), for: .normal
+        )
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        player.play()
     }
 }

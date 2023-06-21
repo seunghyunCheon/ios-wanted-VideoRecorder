@@ -8,7 +8,7 @@
 import UIKit
 
 final class ControlView: UIView {
-    private let backwardButton: UIButton = {
+    let backwardButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
             pointSize: 30,
@@ -24,7 +24,7 @@ final class ControlView: UIView {
         return button
     }()
     
-    private let playButton: UIButton = {
+    let playButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
             pointSize: 30,
@@ -36,11 +36,12 @@ final class ControlView: UIView {
             for: .normal
         )
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .white
         
         return button
     }()
     
-    private let forwardButton: UIButton = {
+    let forwardButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
             pointSize: 30,
