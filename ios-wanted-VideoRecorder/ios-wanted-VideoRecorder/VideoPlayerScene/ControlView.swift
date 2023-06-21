@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ControllView: UIView {
+final class ControlView: UIView {
     private let backwardButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
@@ -19,7 +19,6 @@ final class ControllView: UIView {
             UIImage(systemName: "backward.fill", withConfiguration: config),
             for: .normal
         )
-        button.setContentHuggingPriority(.required, for: .horizontal)
         button.tintColor = .white
         
         return button
@@ -36,7 +35,7 @@ final class ControllView: UIView {
             UIImage(systemName: "play.fill", withConfiguration: config),
             for: .normal
         )
-        button.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -53,7 +52,6 @@ final class ControllView: UIView {
             for: .normal
         )
         
-        button.setContentHuggingPriority(.required, for: .horizontal)
         button.tintColor = .white
         
         return button
@@ -71,7 +69,7 @@ final class ControllView: UIView {
     private func configureLayout() {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.distribution = .fill
+        stackView.distribution = .fillEqually
         stackView.backgroundColor = .black.withAlphaComponent(0.5)
         stackView.layer.cornerRadius = 10
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)

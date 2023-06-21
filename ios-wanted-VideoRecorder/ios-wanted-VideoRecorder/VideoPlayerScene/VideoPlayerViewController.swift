@@ -17,7 +17,7 @@ final class VideoPlayerViewController: UIViewController {
     }()
     var player: AVPlayer!
     var playerLayer: AVPlayerLayer!
-    var controllerView = ControllView()
+    var controllerView = ControlView()
     
     init(url: URL) {
         player = AVPlayer(url: url)
