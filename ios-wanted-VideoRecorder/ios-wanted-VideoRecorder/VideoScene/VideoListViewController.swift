@@ -191,9 +191,12 @@ extension VideoListViewController: UICollectionViewDelegate {
         collectionView.deselectItem(at: indexPath, animated: true)
         let video = videoListViewModel.videoEntity(at: indexPath.row)
         
-        let player = AVPlayer(url: video.videoURL)
-        let vcPlayer = AVPlayerViewController()
-        vcPlayer.player = player
-        self.present(vcPlayer, animated: true)
+        let videoPlayerViewController = VideoPlayerViewController(url: video.videoURL)
+        self.navigationController?.pushViewController(videoPlayerViewController, animated: true)
+//        print(video.videoURL)
+//        let player = AVPlayer(url: video.videoURL)
+//        let vcPlayer = AVPlayerViewController()
+//        vcPlayer.player = player
+//        self.present(vcPlayer, animated: true)
     }
 }
