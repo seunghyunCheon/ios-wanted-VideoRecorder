@@ -8,10 +8,52 @@
 import UIKit
 
 final class ControlView: UIView {
+    let sliderView: UISlider = {
+        let slider = UISlider()
+        slider.tintColor = .systemGray
+        
+        return slider
+    }()
+    
+    let sliderStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 5
+        
+        return stackView
+    }()
+    
+    let currentTimerLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .caption2)
+        label.text = "00:00"
+        label.textColor = .white
+        
+        return label
+    }()
+    
+    let endTimerLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .caption2)
+        label.text = "00:07"
+        label.textColor = .white
+        
+        return label
+    }()
+    
+    let timerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        
+        return stackView
+    }()
+    
     let backwardButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
-            pointSize: 30,
+            pointSize: 20,
             weight: .bold,
             scale: .default
         )
@@ -20,6 +62,7 @@ final class ControlView: UIView {
             for: .normal
         )
         button.tintColor = .white
+        button.setContentHuggingPriority(.required, for: .horizontal)
         
         return button
     }()
@@ -27,7 +70,7 @@ final class ControlView: UIView {
     let playButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
-            pointSize: 30,
+            pointSize: 20,
             weight: .bold,
             scale: .default
         )
@@ -35,8 +78,9 @@ final class ControlView: UIView {
             UIImage(systemName: "play.fill", withConfiguration: config),
             for: .normal
         )
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
+        button.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -44,7 +88,7 @@ final class ControlView: UIView {
     let forwardButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(
-            pointSize: 30,
+            pointSize: 20,
             weight: .bold,
             scale: .default
         )
@@ -54,8 +98,31 @@ final class ControlView: UIView {
         )
         
         button.tintColor = .white
+        button.setContentHuggingPriority(.required, for: .horizontal)
         
         return button
+    }()
+    
+    private let playerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        
+        return stackView
+    }()
+    
+    private let wholeStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        stackView.backgroundColor = .black.withAlphaComponent(0.5)
+        stackView.layer.cornerRadius = 10
+        stackView.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
     }()
     
     override init(frame: CGRect) {
@@ -68,26 +135,24 @@ final class ControlView: UIView {
     }
     
     private func configureLayout() {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.backgroundColor = .black.withAlphaComponent(0.5)
-        stackView.layer.cornerRadius = 10
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(wholeStackView)
         
-        self.addSubview(stackView)
+        wholeStackView.addArrangedSubview(sliderView)
+        wholeStackView.addArrangedSubview(timerStackView)
+        wholeStackView.addArrangedSubview(playerStackView)
         
+        timerStackView.addArrangedSubview(currentTimerLabel)
+        timerStackView.addArrangedSubview(endTimerLabel)
+        
+        playerStackView.addArrangedSubview(backwardButton)
+        playerStackView.addArrangedSubview(playButton)
+        playerStackView.addArrangedSubview(forwardButton)
+
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: self.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            wholeStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            wholeStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            wholeStackView.topAnchor.constraint(equalTo: self.topAnchor),
+            wholeStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
         ])
-        
-        stackView.addArrangedSubview(backwardButton)
-        stackView.addArrangedSubview(playButton)
-        stackView.addArrangedSubview(forwardButton)
     }
 }

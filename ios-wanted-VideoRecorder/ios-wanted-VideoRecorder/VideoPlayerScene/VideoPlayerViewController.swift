@@ -42,7 +42,7 @@ final class VideoPlayerViewController: UIViewController {
             controllerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
             controllerView.heightAnchor.constraint(
                 equalTo: controllerView.widthAnchor,
-                multiplier: 0.35
+                multiplier: 0.4
             ),
             controllerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             controllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
