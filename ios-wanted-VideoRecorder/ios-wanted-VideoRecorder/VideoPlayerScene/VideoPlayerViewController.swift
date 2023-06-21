@@ -17,6 +17,7 @@ final class VideoPlayerViewController: UIViewController {
     }()
     var player: AVPlayer!
     var playerLayer: AVPlayerLayer!
+    var controllerView = ControllView()
     
     init(url: URL) {
         player = AVPlayer(url: url)
@@ -28,12 +29,29 @@ final class VideoPlayerViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        configureLayout()
+    }
+    
+    private func configureLayout() {
         view.backgroundColor = .white
         playerLayer = AVPlayerLayer(player: player)
         playerLayer.videoGravity = .resizeAspectFill
         playerLayer.frame = view.frame
         
         view.layer.addSublayer(playerLayer)
+        
+        controllerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(controllerView)
+        
+        NSLayoutConstraint.activate([
+            controllerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+            controllerView.heightAnchor.constraint(
+                equalTo: controllerView.widthAnchor,
+                multiplier: 0.35
+            ),
+            controllerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            controllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+        ])
     }
     
     override func viewDidAppear(_ animated: Bool) {
