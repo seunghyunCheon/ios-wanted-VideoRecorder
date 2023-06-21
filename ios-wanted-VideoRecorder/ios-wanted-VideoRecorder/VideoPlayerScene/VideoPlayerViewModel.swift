@@ -32,6 +32,7 @@ final class VideoPlayerViewModel {
     struct Input {
         let playVideoButtonTappedEvent: AnyPublisher<Void, Never>
         let forwardButtonTappedEvent: AnyPublisher<Void, Never>
+        let backwardButtonTappedEvent: AnyPublisher<Void, Never>
     }
     
     struct Output {
@@ -66,7 +67,6 @@ final class VideoPlayerViewModel {
             }
             .eraseToAnyPublisher()
         
-        // 앞으로 버튼누르면 error를 전달하거나 실제로 앞으로 가거나 둘 중 하나.
         input.forwardButtonTappedEvent
             .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in
                 guard let self else {
@@ -74,6 +74,25 @@ final class VideoPlayerViewModel {
                 }
                 do {
                     try forwardButtonTapped()
+                    return Just(()).setFailureType(to: Error.self).eraseToAnyPublisher()
+                } catch {
+                    return Fail(error: error).eraseToAnyPublisher()
+                }
+            }
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    self.error = error
+                }
+            } receiveValue: { }
+            .store(in: &cancellables)
+        
+        input.backwardButtonTappedEvent
+            .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in
+                guard let self else {
+                    return Fail(error: VideoPlayerViewModelError.failedToForward).eraseToAnyPublisher()
+                }
+                do {
+                    try backwardButtonTapped()
                     return Just(()).setFailureType(to: Error.self).eraseToAnyPublisher()
                 } catch {
                     return Fail(error: error).eraseToAnyPublisher()
@@ -101,5 +120,16 @@ final class VideoPlayerViewModel {
             let time: CMTime = CMTimeMake(value: Int64(Int(newTime*1000)), timescale: 1000)
             player.seek(to: time)
         }
+    }
+    
+    private func backwardButtonTapped() throws {
+        let currentTime = CMTimeGetSeconds(player.currentTime())
+        var newTime = currentTime - 2.0
+        
+        if newTime < 0 {
+            newTime = 0
+        }
+        let time = CMTimeMake(value: Int64(Int(newTime*1000)), timescale: 1000)
+        player.seek(to: time)
     }
 }
