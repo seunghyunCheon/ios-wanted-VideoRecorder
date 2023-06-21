@@ -50,7 +50,10 @@ final class VideoPlayerViewController: UIViewController {
     }
     
     private func bindAction() {
-        let input = VideoPlayerViewModel.Input(playVideoButtonTappedEvent: controllerView.playButton.buttonPublisher)
+        let input = VideoPlayerViewModel.Input(
+            playVideoButtonTappedEvent: controllerView.playButton.buttonPublisher,
+            forwardButtonTappedEvent: controllerView.forwardButton.buttonPublisher
+        )
         
         let output = viewModel.transform(input: input)
         
