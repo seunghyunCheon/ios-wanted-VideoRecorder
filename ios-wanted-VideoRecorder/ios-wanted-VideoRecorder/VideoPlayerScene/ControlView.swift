@@ -35,7 +35,7 @@ final class ControlView: UIView {
     let endTimerLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .caption2)
-        label.text = "00:07"
+        label.text = "00:00"
         label.textColor = .white
         
         return label

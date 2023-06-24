@@ -31,6 +31,7 @@
 		6280CE362A42CB1A00186985 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6280CE352A42CB1A00186985 /* VideoPlayerViewController.swift */; };
 		6280CE382A42D69A00186985 /* ControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6280CE372A42D69A00186985 /* ControlView.swift */; };
 		6280CE3A2A42E61300186985 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6280CE392A42E61300186985 /* VideoPlayerViewModel.swift */; };
+		6280CE3C2A431A2B00186985 /* UISlider+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6280CE3B2A431A2B00186985 /* UISlider+Combine.swift */; };
 		62922A072A31B5D70031559F /* RecordingVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62922A062A31B5D70031559F /* RecordingVideoViewController.swift */; };
 		62922A0D2A321E660031559F /* RecordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62922A0C2A321E660031559F /* RecordManager.swift */; };
 		62C495FA2A30110500818DF1 /* VideoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C495F92A30110500818DF1 /* VideoCell.swift */; };
@@ -72,6 +73,7 @@
 		6280CE352A42CB1A00186985 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		6280CE372A42D69A00186985 /* ControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlView.swift; sourceTree = "<group>"; };
 		6280CE392A42E61300186985 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
+		6280CE3B2A431A2B00186985 /* UISlider+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISlider+Combine.swift"; sourceTree = "<group>"; };
 		62922A062A31B5D70031559F /* RecordingVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingVideoViewController.swift; sourceTree = "<group>"; };
 		62922A0C2A321E660031559F /* RecordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordManager.swift; sourceTree = "<group>"; };
 		62C495F92A30110500818DF1 /* VideoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCell.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				6280CDFA2A3307DA00186985 /* UIControl+Combine.swift */,
 				6280CDFC2A330FD400186985 /* UIButton+Combine.swift */,
+				6280CE3B2A431A2B00186985 /* UISlider+Combine.swift */,
 			);
 			path = Combine;
 			sourceTree = "<group>";
@@ -402,6 +405,7 @@
 				6280CDF72A32FAB700186985 /* RecordingViewModel.swift in Sources */,
 				6280CE082A33612600186985 /* CoreDataPersistenceServiceProtocol.swift in Sources */,
 				6280CE0B2A33788700186985 /* VideoRepository.swift in Sources */,
+				6280CE3C2A431A2B00186985 /* UISlider+Combine.swift in Sources */,
 				6280CE112A34107600186985 /* CreateVideoUseCase.swift in Sources */,
 				6280CE2C2A34C69900186985 /* ImageFileManager.swift in Sources */,
 				62CA437D2A300CD000834D80 /* Video+CoreDataProperties.swift in Sources */,

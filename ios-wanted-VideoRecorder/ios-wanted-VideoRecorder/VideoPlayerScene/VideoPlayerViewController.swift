@@ -28,6 +28,7 @@ final class VideoPlayerViewController: UIViewController {
     override func viewDidLoad() {
         configureLayout()
         bindAction()
+        bindState()
     }
     
     private func configureLayout() {
@@ -53,7 +54,8 @@ final class VideoPlayerViewController: UIViewController {
         let input = VideoPlayerViewModel.Input(
             playVideoButtonTappedEvent: controllerView.playButton.buttonPublisher,
             forwardButtonTappedEvent: controllerView.forwardButton.buttonPublisher,
-            backwardButtonTappedEvent: controllerView.backwardButton.buttonPublisher
+            backwardButtonTappedEvent: controllerView.backwardButton.buttonPublisher,
+            sliderValueChangedEvent: controllerView.sliderView.valuePublisher
         )
         
         let output = viewModel.transform(input: input)
@@ -66,6 +68,14 @@ final class VideoPlayerViewController: UIViewController {
             }, receiveValue: { isVideoPlaying in
                 self.changePlayButtonImage(isVideoPlaying)
             })
+            .store(in: &cancellables)
+    }
+    
+    private func bindState() {
+        viewModel.$duration
+            .sink { [weak self] duration in
+                self?.controllerView.endTimerLabel.text = duration
+            }
             .store(in: &cancellables)
     }
     
