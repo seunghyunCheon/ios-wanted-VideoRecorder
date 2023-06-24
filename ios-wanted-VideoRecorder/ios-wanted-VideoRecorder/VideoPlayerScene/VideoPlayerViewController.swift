@@ -77,6 +77,18 @@ final class VideoPlayerViewController: UIViewController {
                 self?.controllerView.endTimerLabel.text = duration
             }
             .store(in: &cancellables)
+        
+        viewModel.$sliderValue
+            .sink { [weak self] value in
+                self?.controllerView.sliderView.value = value
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$currentTime
+            .sink { [weak self] time in
+                self?.controllerView.currentTimerLabel.text = time
+            }
+            .store(in: &cancellables)
     }
     
     private func changePlayButtonImage(_ isVideoPlaying: Bool) {

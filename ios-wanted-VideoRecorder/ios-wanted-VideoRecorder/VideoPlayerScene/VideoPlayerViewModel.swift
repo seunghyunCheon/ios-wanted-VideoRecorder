@@ -13,6 +13,7 @@ enum VideoPlayerViewModelError: LocalizedError {
     case failedToPlay
     case failedToForward
     case failedToDurationError
+    case failedToTimerError
     
     var errorDescription: String? {
         switch self {
@@ -22,6 +23,8 @@ enum VideoPlayerViewModelError: LocalizedError {
             return "비디오 앞으로 이동에 실패했습니다."
         case .failedToDurationError:
             return "비디오 시간 로드에 실패했습니다."
+        case .failedToTimerError:
+            return "비디오 타이머동작에 실패했습니다."
         }
     }
 }
@@ -31,6 +34,8 @@ final class VideoPlayerViewModel {
     var isVideoPlaying: Bool = false
     @Published var error: Error?
     @Published var duration: String?
+    @Published var sliderValue: Float = 0.0
+    @Published var currentTime: String = "00:00"
     private var cancellables = Set<AnyCancellable>()
     
     struct Input {
@@ -47,6 +52,7 @@ final class VideoPlayerViewModel {
     init(url: URL) {
         player = AVPlayer(url: url)
         addDurationObserver()
+        addTimeObserver()
     }
     
     func makeAVPlayerLayer(frame: CGRect) -> AVPlayerLayer {
@@ -57,14 +63,6 @@ final class VideoPlayerViewModel {
         return playerLayer
     }
     
-    // 1. 자동으로 슬라이더가 변할 때
-    // - status를 관찰해야 한다. 만약 변한다면 sliderValue를 이동시키도록 뷰컨에 발행해야 한다.
-    // - 이때 발행할 때는 sliderValue의 값과 텍스트가 변경된 상태로 전달되어야 한다.
-    // 2. 수동으로 변하게 할 때
-    // - sliderValueChanged에서 값을 변하게하면서 뷰컨에 sliderValue를 전달.
-    
-    // 먼저 duration이 변경될 떄마다 duationLabel이 변경되도록해보자.
-    // 뷰모델에서 addObserver를 하는 게 맞을까
     func transform(input: Input) -> Output {
         let isVideoPlayingPublisher = input.playVideoButtonTappedEvent
             .flatMap { [weak self] _ -> AnyPublisher<Bool, Error> in
@@ -140,6 +138,22 @@ final class VideoPlayerViewModel {
                 self?.duration = self?.getTimeString(from: videoItem.duration)
             }
             .store(in: &cancellables)
+    }
+    
+    private func addTimeObserver() {
+        guard let videoItem = player.currentItem else {
+            error = VideoPlayerViewModelError.failedToTimerError
+            return
+        }
+        
+        let interval = CMTime(seconds: 0.001, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        _ = player.addPeriodicTimeObserver(forInterval: interval, queue: .main, using: { [weak self] time in
+            guard let self else { return }
+            
+            let totalDuration = Float(CMTimeGetSeconds(videoItem.duration))
+            self.sliderValue = Float(videoItem.currentTime().seconds) / totalDuration
+            self.currentTime = self.getTimeString(from: videoItem.currentTime())
+        })
     }
     
     private func getTimeString(from time: CMTime) -> String {
