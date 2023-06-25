@@ -61,11 +61,7 @@ final class VideoPlayerViewController: UIViewController {
         let output = viewModel.transform(input: input)
         
         output.isVideoPlaying
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    print(error.localizedDescription)
-                }
-            }, receiveValue: { isVideoPlaying in
+            .sink(receiveValue: { isVideoPlaying in
                 self.changePlayButtonImage(isVideoPlaying)
             })
             .store(in: &cancellables)

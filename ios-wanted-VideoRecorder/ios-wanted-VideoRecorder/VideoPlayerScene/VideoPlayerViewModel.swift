@@ -46,7 +46,7 @@ final class VideoPlayerViewModel {
     }
     
     struct Output {
-        let isVideoPlaying: AnyPublisher<Bool, Error>
+        let isVideoPlaying = PassthroughSubject<Bool, Never>()
     }
     
     init(url: URL) {
@@ -64,20 +64,24 @@ final class VideoPlayerViewModel {
     }
     
     func transform(input: Input) -> Output {
-        let isVideoPlayingPublisher = input.playVideoButtonTappedEvent
-            .flatMap { [weak self] _ -> AnyPublisher<Bool, Error> in
+        let output = Output()
+        
+        input.playVideoButtonTappedEvent
+            .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in
                 guard let self else {
                     return Fail(error: VideoPlayerViewModelError.failedToPlay).eraseToAnyPublisher()
                 }
-                if isVideoPlaying {
-                    player.pause()
-                } else {
-                    player.play()
-                }
-                isVideoPlaying.toggle()
-                return Just(isVideoPlaying).setFailureType(to: Error.self).eraseToAnyPublisher()
+                return Just(()).setFailureType(to: Error.self).eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher()
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    self.error = error
+                }
+            }, receiveValue: {
+                self.changeVideoState()
+                output.isVideoPlaying.send(self.isVideoPlaying)
+            })
+            .store(in: &cancellables)
         
         input.forwardButtonTappedEvent
             .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in
@@ -123,8 +127,19 @@ final class VideoPlayerViewModel {
             }
             .store(in: &cancellables)
         
-        return Output(isVideoPlaying: isVideoPlayingPublisher)
+        bindSliderPauseEvent(to: output.isVideoPlaying)
+        
+        return output
     }
+    
+    private func changeVideoState() {
+          if self.isVideoPlaying {
+              player.pause()
+          } else {
+              player.play()
+          }
+          self.isVideoPlaying.toggle()
+      }
     
     private func addDurationObserver() {
         guard let videoItem = player.currentItem else {
@@ -158,7 +173,7 @@ final class VideoPlayerViewModel {
     
     private func getTimeString(from time: CMTime) -> String {
         let totalSeconds = CMTimeGetSeconds(time)
-            
+        
         let minutes = Int((totalSeconds.truncatingRemainder(dividingBy: 3600)) / 60)
         let seconds = Int(totalSeconds.truncatingRemainder(dividingBy: 60))
         print("totalSeconds: \(totalSeconds), CMTime: \(time)")
@@ -190,6 +205,19 @@ final class VideoPlayerViewModel {
         }
         let time = CMTimeMake(value: Int64(Int(newTime*1000)), timescale: 1000)
         player.seek(to: time)
+    }
+    
+    private func bindSliderPauseEvent(to isVideoPlaying: PassthroughSubject<Bool, Never>) {
+        player.publisher(for: \.timeControlStatus)
+            .sink { status in
+                switch status {
+                case .playing:
+                    isVideoPlaying.send(true)
+                default:
+                    isVideoPlaying.send(false)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func sliderValueChanged(value: Float) {
