@@ -103,10 +103,29 @@ final class ControlView: UIView {
         return button
     }()
     
+    let shareButton: UIButton = {
+        let button = UIButton()
+        let config = UIImage.SymbolConfiguration(
+            pointSize: 20,
+            weight: .bold,
+            scale: .default
+        )
+        button.setImage(
+            UIImage(systemName: "square.and.arrow.up", withConfiguration: config),
+            for: .normal
+        )
+        
+        button.tintColor = .white
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        
+        return button
+    }()
+    
     private let playerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing
+        stackView.alignment = .center
         
         return stackView
     }()
@@ -147,7 +166,8 @@ final class ControlView: UIView {
         playerStackView.addArrangedSubview(backwardButton)
         playerStackView.addArrangedSubview(playButton)
         playerStackView.addArrangedSubview(forwardButton)
-
+        playerStackView.addArrangedSubview(shareButton)
+        
         NSLayoutConstraint.activate([
             wholeStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             wholeStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
