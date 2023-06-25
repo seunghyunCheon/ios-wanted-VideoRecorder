@@ -146,7 +146,7 @@ final class VideoPlayerViewModel {
             return
         }
         
-        let interval = CMTime(seconds: 0.001, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        let interval = CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         _ = player.addPeriodicTimeObserver(forInterval: interval, queue: .main, using: { [weak self] time in
             guard let self else { return }
             
@@ -161,6 +161,7 @@ final class VideoPlayerViewModel {
             
         let minutes = Int((totalSeconds.truncatingRemainder(dividingBy: 3600)) / 60)
         let seconds = Int(totalSeconds.truncatingRemainder(dividingBy: 60))
+        print("totalSeconds: \(totalSeconds), CMTime: \(time)")
         
         let timeString = String(format: "%02d:%02d", minutes, seconds)
         return timeString
@@ -174,7 +175,7 @@ final class VideoPlayerViewModel {
         let currentTime = CMTimeGetSeconds(player.currentTime())
         let newTime = currentTime + 2.0
         
-        if newTime < (CMTimeGetSeconds(duration) - 2.0) {
+        if newTime < (CMTimeGetSeconds(duration)) {
             let time: CMTime = CMTimeMake(value: Int64(Int(newTime*1000)), timescale: 1000)
             player.seek(to: time)
         }
@@ -192,9 +193,10 @@ final class VideoPlayerViewModel {
     }
     
     private func sliderValueChanged(value: Float) {
-        let seconds = Int64(value)
-        let targetTime = CMTimeMake(value: seconds*1000, timescale: 1000)
-        
+        guard let item = player.currentItem else { return }
+        let totalDuration = item.duration.seconds
+        let targetTime = CMTimeMake(value: Int64(Double(value)*1000*totalDuration), timescale: 1000)
+        currentTime = getTimeString(from: targetTime)
         player.seek(to: targetTime)
     }
 }
