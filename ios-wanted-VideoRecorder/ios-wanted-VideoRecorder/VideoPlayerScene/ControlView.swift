@@ -121,7 +121,7 @@ final class ControlView: UIView {
         return button
     }()
     
-    private let playerStackView: UIStackView = {
+    let playerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing

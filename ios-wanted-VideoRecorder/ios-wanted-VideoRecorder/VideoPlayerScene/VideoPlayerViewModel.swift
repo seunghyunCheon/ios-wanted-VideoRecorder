@@ -32,6 +32,7 @@ enum VideoPlayerViewModelError: LocalizedError {
 final class VideoPlayerViewModel {
     var player: AVPlayer
     var isVideoPlaying: Bool = false
+    let url: URL
     @Published var error: Error?
     @Published var duration: String?
     @Published var sliderValue: Float = 0.0
@@ -42,14 +43,17 @@ final class VideoPlayerViewModel {
         let playVideoButtonTappedEvent: AnyPublisher<Void, Never>
         let forwardButtonTappedEvent: AnyPublisher<Void, Never>
         let backwardButtonTappedEvent: AnyPublisher<Void, Never>
+        let shareButtonTappedEvent: AnyPublisher<Void, Never>
         let sliderValueChangedEvent: AnyPublisher<Float, Never>
     }
     
     struct Output {
         let isVideoPlaying = PassthroughSubject<Bool, Never>()
+        let showShareView = PassthroughSubject<Void, Never>()
     }
     
     init(url: URL) {
+        self.url = url
         player = AVPlayer(url: url)
         addDurationObserver()
         addTimeObserver()
@@ -119,6 +123,13 @@ final class VideoPlayerViewModel {
                     self.error = error
                 }
             } receiveValue: { }
+            .store(in: &cancellables)
+        
+        // 버튼눌리면 화면에 보여져야 함.
+        input.shareButtonTappedEvent
+            .sink {
+                output.showShareView.send(())
+            }
             .store(in: &cancellables)
         
         input.sliderValueChangedEvent

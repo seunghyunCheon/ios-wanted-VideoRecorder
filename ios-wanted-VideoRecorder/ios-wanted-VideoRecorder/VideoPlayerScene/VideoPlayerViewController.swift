@@ -10,7 +10,6 @@ import AVFoundation
 import Combine
 
 final class VideoPlayerViewController: UIViewController {
-
     var controllerView = ControlView()
     private var isVideoPlaying = false
     private let viewModel: VideoPlayerViewModel
@@ -55,6 +54,7 @@ final class VideoPlayerViewController: UIViewController {
             playVideoButtonTappedEvent: controllerView.playButton.buttonPublisher,
             forwardButtonTappedEvent: controllerView.forwardButton.buttonPublisher,
             backwardButtonTappedEvent: controllerView.backwardButton.buttonPublisher,
+            shareButtonTappedEvent: controllerView.shareButton.buttonPublisher,
             sliderValueChangedEvent: controllerView.sliderView.valuePublisher
         )
         
@@ -65,6 +65,18 @@ final class VideoPlayerViewController: UIViewController {
                 self.changePlayButtonImage(isVideoPlaying)
             })
             .store(in: &cancellables)
+        
+        output.showShareView
+            .sink {
+                self.showShareVideo()
+            }
+            .store(in: &cancellables)
+    }
+    
+    func showShareVideo() {
+        let activityViewController = UIActivityViewController(activityItems: [viewModel.url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
     private func bindState() {
